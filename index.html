@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PT Mulia Intelligence Technologies — Tracker</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --color-bg:#ffffff;--color-bg-secondary:#f7f7f5;--color-bg-tertiary:#f1efe8;
+  --color-text:#1a1a18;--color-text-secondary:#6b6b67;--color-text-tertiary:#9e9e99;
+  --color-border:rgba(0,0,0,0.12);--color-border-secondary:rgba(0,0,0,0.22);
+  --color-success:#1D9E75;--color-success-bg:#E1F5EE;--color-success-text:#085041;
+  --color-warning:#BA7517;--color-warning-bg:#FAEEDA;--color-warning-text:#633806;
+  --color-danger:#E24B4A;--color-danger-bg:#FCEBEB;--color-danger-text:#791F1F;
+  --color-info:#378ADD;--color-info-bg:#E6F1FB;--color-info-text:#0C447C;
+  --radius-md:8px;--radius-lg:12px;
+  --font:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;
+}
+@media(prefers-color-scheme:dark){:root{
+  --color-bg:#1c1c1a;--color-bg-secondary:#252523;--color-bg-tertiary:#2e2e2b;
+  --color-text:#f0f0ec;--color-text-secondary:#a8a8a3;--color-text-tertiary:#6b6b67;
+  --color-border:rgba(255,255,255,0.12);--color-border-secondary:rgba(255,255,255,0.22);
+  --color-success-bg:#04342C;--color-success-text:#9FE1CB;
+  --color-warning-bg:#412402;--color-warning-text:#FAC775;
+  --color-danger-bg:#501313;--color-danger-text:#F7C1C1;
+  --color-info-bg:#042C53;--color-info-text:#B5D4F4;
+}}
+body{font-family:var(--font);color:var(--color-text);background:var(--color-bg-tertiary);font-size:14px;min-height:100vh}
+.app{max-width:760px;margin:0 auto;padding:1.5rem 1rem 4rem}
+.app-header{margin-bottom:1.5rem;display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.app-header h1{font-size:16px;font-weight:500}
+.app-header p{font-size:12px;color:var(--color-text-secondary);margin-top:2px}
+.sync-status{font-size:11px;padding:3px 10px;border-radius:var(--radius-md);white-space:nowrap;flex-shrink:0;margin-top:2px}
+.sync-ok{background:var(--color-success-bg);color:var(--color-success-text)}
+.sync-saving{background:var(--color-warning-bg);color:var(--color-warning-text)}
+.sync-error{background:var(--color-danger-bg);color:var(--color-danger-text)}
+.nav{display:flex;gap:2px;margin-bottom:1.5rem;border-bottom:0.5px solid var(--color-border);flex-wrap:wrap;background:var(--color-bg);border-radius:var(--radius-lg) var(--radius-lg) 0 0;padding:0 0.5rem}
+.nav-btn{padding:10px 12px;border:none;background:transparent;cursor:pointer;font-size:13px;color:var(--color-text-secondary);border-bottom:2px solid transparent;margin-bottom:-0.5px;font-family:var(--font);white-space:nowrap}
+.nav-btn:hover{color:var(--color-text)}
+.nav-btn.active{color:var(--color-text);border-bottom-color:var(--color-text);font-weight:500}
+.view{display:none}.view.active{display:block}
+.card{background:var(--color-bg);border:0.5px solid var(--color-border);border-radius:var(--radius-lg);padding:1rem 1.25rem;margin-bottom:12px}
+.card-overdue{border-color:var(--color-danger)}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:var(--radius-md);font-weight:500}
+.badge-todo{background:var(--color-info-bg);color:var(--color-info-text)}
+.badge-inprogress{background:var(--color-warning-bg);color:var(--color-warning-text)}
+.badge-done{background:var(--color-success-bg);color:var(--color-success-text)}
+.badge-blocked{background:var(--color-danger-bg);color:var(--color-danger-text)}
+.badge-overdue{background:var(--color-danger-bg);color:var(--color-danger-text)}
+.badge-duesoon{background:var(--color-warning-bg);color:var(--color-warning-text)}
+.badge-active{background:#E1F5EE;color:#085041}
+.badge-onhold{background:#FAEEDA;color:#633806}
+.badge-won{background:#EAF3DE;color:#27500A}
+.badge-lost{background:#FCEBEB;color:#791F1F}
+.badge-cancelled{background:#F1EFE8;color:#444441}
+.badge-AMR{background:#E6F1FB;color:#0C447C}
+.badge-Arm{background:#EEEDFE;color:#3C3489}
+.badge-IoT{background:#E1F5EE;color:#085041}
+.badge-Vision{background:#FAEEDA;color:#633806}
+.badge-role-Sales{background:#EEEDFE;color:#3C3489}
+.badge-role-Engineer{background:#FAECE7;color:#712B13}
+.badge-visit-demo{background:#E6F1FB;color:#0C447C}
+.badge-visit-followup{background:#E1F5EE;color:#085041}
+.badge-visit-cold{background:#F1EFE8;color:#444441}
+.badge-visit-negotiation{background:#EEEDFE;color:#3C3489}
+.badge-visit-closing{background:#EAF3DE;color:#27500A}
+.badge-visit-other{background:#FAEEDA;color:#633806}
+.metric-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:10px;margin-bottom:1.5rem}
+.metric{background:var(--color-bg-secondary);border-radius:var(--radius-md);padding:12px}
+.metric-label{font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+.metric-val{font-size:22px;font-weight:500}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+label{display:block;font-size:12px;color:var(--color-text-secondary);margin-bottom:4px}
+input,select,textarea{width:100%;font-family:var(--font);font-size:13px;background:var(--color-bg);color:var(--color-text);border:0.5px solid var(--color-border-secondary);border-radius:var(--radius-md);padding:7px 10px;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--color-info);box-shadow:0 0 0 2px rgba(55,138,221,0.15)}
+textarea{height:70px;resize:vertical}
+.btn-primary{background:var(--color-text);color:var(--color-bg);border:none;padding:8px 18px;border-radius:var(--radius-md);cursor:pointer;font-size:13px;font-family:var(--font);font-weight:500}
+.btn-primary:hover{opacity:0.85}
+.btn-sm{font-size:12px;padding:5px 12px;border-radius:var(--radius-md);cursor:pointer;font-family:var(--font);background:transparent;border:0.5px solid var(--color-border-secondary);color:var(--color-text-secondary)}
+.btn-sm:hover{background:var(--color-bg-secondary)}
+.btn-danger{border-color:var(--color-danger);color:var(--color-danger-text)}
+.section-title{font-size:16px;font-weight:500;margin-bottom:1rem}
+.section-label{font-size:12px;font-weight:500;color:var(--color-text-secondary);margin:1.25rem 0 8px}
+.section-label:first-child{margin-top:0}
+.divider{border:none;border-top:0.5px solid var(--color-border);margin:1.25rem 0}
+.empty{color:var(--color-text-tertiary);font-size:13px;padding:0.5rem 0}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;flex-shrink:0}
+.avatar-Sales{background:#EEEDFE;color:#3C3489}
+.avatar-Engineer{background:#FAECE7;color:#712B13}
+.avatar-default{background:var(--color-info-bg);color:var(--color-info-text)}
+.task-meta{font-size:12px;color:var(--color-text-secondary);margin-top:4px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.project-card-header{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:10px}
+.stage-row{display:flex;align-items:center;gap:6px;font-size:12px;margin-top:6px;flex-wrap:wrap}
+.stage-steps{display:flex;gap:3px;flex-wrap:wrap}
+.stage-step{padding:2px 7px;border-radius:10px;font-size:11px;background:var(--color-bg-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border)}
+.stage-step.current{background:var(--color-info-bg);color:var(--color-info-text)}
+.filter-row{display:flex;gap:8px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.filter-row select{width:auto;padding:5px 10px}
+.pill-group{display:flex;gap:4px;flex-wrap:wrap}
+.pill{font-size:11px;padding:3px 10px;border-radius:10px;background:var(--color-bg-secondary);color:var(--color-text-secondary);border:0.5px solid var(--color-border)}
+.prob-bar-bg{height:4px;border-radius:2px;background:var(--color-border);margin-top:3px;overflow:hidden}
+.prob-bar-fill{height:4px;border-radius:2px}
+.card-dimmed{opacity:0.55}
+.visit-card-accent{border-left:3px solid #7F77DD;border-radius:0 var(--radius-lg) var(--radius-lg) 0}
+.next-action-box{background:var(--color-bg-secondary);border-radius:var(--radius-md);padding:7px 10px;margin-top:6px;font-size:12px}
+.person-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:0.5px solid var(--color-border)}
+.person-row:first-child{border-top:none}
+.bar-bg{height:6px;border-radius:3px;background:var(--color-bg-secondary);overflow:hidden;flex:1}
+.visit-row{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-top:0.5px solid var(--color-border)}
+.visit-row:first-child{border-top:none}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.target-bar-bg{height:8px;border-radius:4px;background:var(--color-bg-secondary);overflow:hidden;margin-top:4px}
+.loading-overlay{position:fixed;inset:0;background:var(--color-bg-tertiary);display:flex;flex-direction:column;align-items:center;justify-content:center;z-index:100;gap:12px}
+.spinner{width:28px;height:28px;border:2.5px solid var(--color-border);border-top-color:var(--color-text);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.setup-box{background:var(--color-bg);border:0.5px solid var(--color-border);border-radius:var(--radius-lg);padding:1.5rem;max-width:480px;width:90%}
+.setup-box h2{font-size:15px;font-weight:500;margin-bottom:8px}
+.setup-box p{font-size:13px;color:var(--color-text-secondary);line-height:1.6;margin-bottom:10px}
+.setup-box code{background:var(--color-bg-secondary);padding:2px 6px;border-radius:4px;font-size:12px;font-family:monospace}
+</style>
+</head>
+<body>
+
+<!-- Loading / setup overlay -->
+<div id="loading-overlay" class="loading-overlay">
+  <div class="spinner"></div>
+  <div style="font-size:13px;color:var(--color-text-secondary)">Connecting to Google Sheets...</div>
+</div>
+
+<!-- Setup prompt (shown if SCRIPT_URL not configured) -->
+<div id="setup-overlay" class="loading-overlay" style="display:none">
+  <div class="setup-box">
+    <h2>Backend setup required</h2>
+    <p>To sync data across devices, you need to connect this app to Google Sheets. Follow these steps:</p>
+    <p><strong>1.</strong> Open <a href="https://script.google.com" target="_blank" style="color:var(--color-info)">script.google.com</a> → New project</p>
+    <p><strong>2.</strong> Paste the contents of <code>mulia_apps_script.gs</code> and save</p>
+    <p><strong>3.</strong> Click <strong>Deploy → New deployment → Web App</strong><br>Set "Execute as: Me" and "Who has access: Anyone"</p>
+    <p><strong>4.</strong> Copy the Web App URL and paste it below:</p>
+    <input type="text" id="script-url-input" placeholder="https://script.google.com/macros/s/.../exec" style="margin-bottom:10px">
+    <button class="btn-primary" onclick="saveScriptUrl()" style="width:100%">Connect & continue</button>
+  </div>
+</div>
+
+<div class="app" id="main-app" style="display:none">
+  <div class="app-header">
+    <div>
+      <h1>PT Mulia Intelligence Technologies</h1>
+      <p>Task &amp; project tracker</p>
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+      <span id="sync-status" class="sync-status sync-ok">Synced</span>
+      <button class="btn-sm" onclick="refreshAll()" style="font-size:11px;padding:3px 8px">
+        <svg xmlns="http://www.w3.org/2000/svg" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-1px;display:inline-block"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+        Refresh
+      </button>
+    </div>
+  </div>
+
+  <div class="nav">
+    <button class="nav-btn active" onclick="showView('dashboard')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;display:inline-block"><rect x="3" y="12" width="4" height="8" rx="1"/><rect x="10" y="8" width="4" height="12" rx="1"/><rect x="17" y="4" width="4" height="16" rx="1"/></svg>
+      Dashboard
+    </button>
+    <button class="nav-btn" onclick="showView('tasks')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;display:inline-block"><polyline points="4 12 8 16 16 8"/><polyline points="9 12 13 16 21 8"/></svg>
+      Tasks
+    </button>
+    <button class="nav-btn" onclick="showView('sales')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;display:inline-block"><path d="M12 2a7 7 0 0 1 7 7c0 5-7 13-7 13S5 14 5 9a7 7 0 0 1 7-7z"/><circle cx="12" cy="9" r="2.5"/></svg>
+      Sales activity
+    </button>
+    <button class="nav-btn" onclick="showView('projects')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;display:inline-block"><path d="M4 4h6l2 3h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/></svg>
+      Projects
+    </button>
+    <button class="nav-btn" onclick="showView('employees')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;display:inline-block"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Employees
+    </button>
+    <button class="nav-btn" onclick="showView('weekly')">
+      <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;display:inline-block"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+      Weekly summary
+    </button>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="v-dashboard" class="view active">
+    <div class="metric-grid" id="metrics"></div>
+    <div id="dash-overdue-section"></div>
+    <hr class="divider">
+    <p class="section-title">Open tasks by person</p>
+    <div id="today-summary"></div>
+    <hr class="divider">
+    <p class="section-title">Project health</p>
+    <div id="project-health"></div>
+  </div>
+
+  <!-- TASKS -->
+  <div id="v-tasks" class="view">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <p class="section-title" style="margin:0">Tasks</p>
+      <button class="btn-primary" onclick="openTaskForm()">+ Add task</button>
+    </div>
+    <div class="filter-row">
+      <select id="filter-emp" onchange="renderTasks()"><option value="">All employees</option></select>
+      <select id="filter-proj" onchange="renderTasks()"><option value="">All projects</option></select>
+      <select id="filter-status" onchange="renderTasks()">
+        <option value="">All statuses</option><option value="todo">To do</option>
+        <option value="inprogress">In progress</option><option value="done">Done</option><option value="blocked">Blocked</option>
+      </select>
+      <select id="filter-due" onchange="renderTasks()">
+        <option value="">Any due date</option><option value="overdue">Overdue</option>
+        <option value="today">Due today</option><option value="week">Due this week</option>
+      </select>
+    </div>
+    <div id="task-form" style="display:none" class="card">
+      <p style="font-weight:500;margin-bottom:12px" id="task-form-title">Add task</p>
+      <div style="margin-bottom:10px"><label>Task name</label><input type="text" id="t-name" placeholder="What needs to get done?"></div>
+      <div style="margin-bottom:10px"><label>Description (optional)</label><textarea id="t-desc" placeholder="Any additional detail..."></textarea></div>
+      <div class="form-row">
+        <div><label>Assigned to</label><select id="t-emp"></select></div>
+        <div><label>Project</label><select id="t-proj"></select></div>
+      </div>
+      <div class="form-row">
+        <div><label>Status</label>
+          <select id="t-status">
+            <option value="todo">To do</option><option value="inprogress">In progress</option>
+            <option value="done">Done</option><option value="blocked">Blocked</option>
+          </select>
+        </div>
+        <div><label>Target date</label><input type="date" id="t-due"></div>
+      </div>
+      <div style="margin-bottom:12px"><label>Blockers (optional)</label><input type="text" id="t-blocker" placeholder="What's in the way?"></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" onclick="saveTask()">Save task</button>
+        <button class="btn-sm" onclick="closeTaskForm()">Cancel</button>
+      </div>
+    </div>
+    <div id="task-list"></div>
+  </div>
+
+  <!-- SALES ACTIVITY -->
+  <div id="v-sales" class="view">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <p class="section-title" style="margin:0">Sales activity</p>
+      <button class="btn-primary" onclick="openVisitForm()">+ Log visit</button>
+    </div>
+    <div class="filter-row">
+      <select id="filter-visit-emp" onchange="renderVisits()"><option value="">All sales staff</option></select>
+      <select id="filter-visit-purpose" onchange="renderVisits()">
+        <option value="">All purposes</option><option value="demo">Demo</option>
+        <option value="followup">Follow-up</option><option value="cold">Cold visit</option>
+        <option value="negotiation">Negotiation</option><option value="closing">Closing</option><option value="other">Other</option>
+      </select>
+      <select id="filter-visit-date" onchange="renderVisits()">
+        <option value="">All dates</option><option value="today">Today</option>
+        <option value="week">This week</option><option value="month">This month</option>
+      </select>
+    </div>
+    <div id="visit-form" style="display:none" class="card">
+      <p style="font-weight:500;margin-bottom:12px" id="visit-form-title">Log a visit</p>
+      <div class="form-row">
+        <div><label>Sales person</label><select id="v-emp"></select></div>
+        <div><label>Date</label><input type="date" id="v-date"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Time (optional)</label><input type="time" id="v-time"></div>
+        <div><label>Location / area</label><input type="text" id="v-location" placeholder="e.g. Sudirman, Jakarta"></div>
+      </div>
+      <div class="form-row">
+        <div><label>Client / prospect visited</label><input type="text" id="v-client" placeholder="Company or person name"></div>
+        <div><label>Purpose</label>
+          <select id="v-purpose">
+            <option value="demo">Demo</option><option value="followup">Follow-up</option>
+            <option value="cold">Cold visit</option><option value="negotiation">Negotiation</option>
+            <option value="closing">Closing</option><option value="other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:10px"><label>Outcome / notes</label><textarea id="v-outcome" placeholder="What happened?"></textarea></div>
+      <div style="margin-bottom:10px"><label>Next action</label><input type="text" id="v-next" placeholder="What's the follow-up?"></div>
+      <div style="margin-bottom:12px"><label>Link to project (optional)</label><select id="v-proj"></select></div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" onclick="saveVisit()">Save visit</button>
+        <button class="btn-sm" onclick="closeVisitForm()">Cancel</button>
+      </div>
+    </div>
+    <div id="visit-list"></div>
+  </div>
+
+  <!-- PROJECTS -->
+  <div id="v-projects" class="view">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <p class="section-title" style="margin:0">Projects</p>
+      <button class="btn-primary" onclick="openProjectForm()">+ Add project</button>
+    </div>
+    <div id="project-form" style="display:none" class="card">
+      <p style="font-weight:500;margin-bottom:12px" id="proj-form-title">Add project</p>
+      <div class="form-row">
+        <div><label>Project name</label><input type="text" id="p-name" placeholder="Project name"></div>
+        <div><label>Project type</label>
+          <select id="p-type"><option value="AMR">AMR</option><option value="Arm">Arm</option><option value="IoT">IoT</option><option value="Vision">Vision</option></select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div><label>Status</label>
+          <select id="p-status">
+            <option value="active">Active</option><option value="onhold">On hold</option>
+            <option value="won">Won</option><option value="lost">Lost</option><option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div><label>Probability of closing: <span id="prob-display">70%</span></label>
+          <input type="range" id="p-prob" min="0" max="100" step="5" value="70" oninput="document.getElementById('prob-display').textContent=this.value+'%'">
+        </div>
+      </div>
+      <div class="form-row">
+        <div><label>Sales owner</label><select id="p-sales-owner"></select></div>
+        <div><label>Sales stage</label>
+          <select id="p-sales-stage">
+            <option value="Prospecting">Prospecting</option><option value="Proposal">Proposal</option>
+            <option value="Negotiation">Negotiation</option><option value="Closed">Closed</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div><label>Engineer owner</label><select id="p-eng-owner"></select></div>
+        <div><label>Delivery stage</label>
+          <select id="p-eng-stage">
+            <option value="Planning">Planning</option><option value="In progress">In progress</option>
+            <option value="Review">Review</option><option value="Delivered">Delivered</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div><label>Key deadline</label><input type="date" id="p-deadline"></div>
+        <div><label>Notes / blockers</label><input type="text" id="p-notes" placeholder="Any notes?"></div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" onclick="saveProject()">Save project</button>
+        <button class="btn-sm" onclick="closeProjectForm()">Cancel</button>
+      </div>
+    </div>
+    <div class="filter-row" style="margin-top:0">
+      <select id="filter-proj-status" onchange="renderProjects()">
+        <option value="">All statuses</option><option value="active">Active</option>
+        <option value="onhold">On hold</option><option value="won">Won</option>
+        <option value="lost">Lost</option><option value="cancelled">Cancelled</option>
+      </select>
+    </div>
+    <div id="project-list"></div>
+  </div>
+
+  <!-- EMPLOYEES -->
+  <div id="v-employees" class="view">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem">
+      <p class="section-title" style="margin:0">Employees</p>
+      <button class="btn-primary" onclick="openEmpForm()">+ Add employee</button>
+    </div>
+    <div id="emp-form" style="display:none" class="card">
+      <p style="font-weight:500;margin-bottom:12px" id="emp-form-title">Add employee</p>
+      <div class="form-row">
+        <div><label>Name</label><input type="text" id="e-name" placeholder="Full name"></div>
+        <div><label>Role</label>
+          <select id="e-role" onchange="document.getElementById('e-target-row').style.display=this.value==='Sales'?'block':'none'">
+            <option value="Sales">Sales</option><option value="Engineer">Engineer</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:10px"><label>Current focus</label><input type="text" id="e-focus" placeholder="What are they focused on right now?"></div>
+      <div id="e-target-row" style="margin-bottom:12px">
+        <label>Weekly visit target</label>
+        <input type="number" id="e-target" min="1" max="30" placeholder="e.g. 10">
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="btn-primary" onclick="saveEmployee()">Save</button>
+        <button class="btn-sm" onclick="closeEmpForm()">Cancel</button>
+      </div>
+    </div>
+    <div id="emp-list"></div>
+  </div>
+
+  <!-- WEEKLY SUMMARY -->
+  <div id="v-weekly" class="view">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1.5rem">
+      <div style="flex:1">
+        <div id="week-label" style="font-size:15px;font-weight:500"></div>
+        <div id="week-sub" style="font-size:12px;color:var(--color-text-secondary);margin-top:2px"></div>
+      </div>
+      <button class="btn-sm" onclick="shiftWeek(-1)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;display:inline-block"><polyline points="15 18 9 12 15 6"/></svg>
+        Prev
+      </button>
+      <button class="btn-sm" onclick="shiftWeek(1)" id="btn-next-week">
+        Next
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;display:inline-block"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    <div id="weekly-content"></div>
+  </div>
+</div>
+
+<script>
+// ─── CONFIGURATION ───────────────────────────────────────────
+// Paste your Google Apps Script Web App URL here after deploying:
+let SCRIPT_URL = localStorage.getItem('mulia_script_url') || '';
+// ─────────────────────────────────────────────────────────────
+
+const SALES_STAGES=['Prospecting','Proposal','Negotiation','Closed'];
+const ENG_STAGES=['Planning','In progress','Review','Delivered'];
+const PROJECT_TYPES=['AMR','Arm','IoT','Vision'];
+const INACTIVE=['lost','cancelled'];
+const PURPOSE_LABELS={demo:'Demo',followup:'Follow-up',cold:'Cold visit',negotiation:'Negotiation',closing:'Closing',other:'Other'};
+
+let state={employees:[],projects:[],tasks:[],visits:[]};
+let weekOffset=0;
+let currentView='dashboard';
+
+// ─── SYNC HELPERS ────────────────────────────────────────────
+function setSyncStatus(s){
+  const el=document.getElementById('sync-status');
+  if(!el)return;
+  el.className='sync-status sync-'+s;
+  el.textContent=s==='ok'?'Synced':s==='saving'?'Saving...':'Sync error';
+}
+
+async function api(params){
+  const url=new URL(SCRIPT_URL);
+  Object.entries(params).forEach(([k,v])=>url.searchParams.set(k,typeof v==='object'?JSON.stringify(v):v));
+  const r=await fetch(url.toString());
+  if(!r.ok)throw new Error('HTTP '+r.status);
+  const data=await r.json();
+  if(data.error)throw new Error(data.error);
+  return data;
+}
+
+async function loadAll(){
+  setSyncStatus('saving');
+  try{
+    const [employees,projects,tasks,visits]=await Promise.all([
+      api({action:'getAll',table:'employees'}),
+      api({action:'getAll',table:'projects'}),
+      api({action:'getAll',table:'tasks'}),
+      api({action:'getAll',table:'visits'}),
+    ]);
+    state={employees,projects,tasks,visits};
+    setSyncStatus('ok');
+    return true;
+  }catch(e){
+    console.error(e);
+    setSyncStatus('error');
+    return false;
+  }
+}
+
+async function apiSave(table,record){
+  setSyncStatus('saving');
+  try{
+    await api({action:'save',table,record});
+    setSyncStatus('ok');
+  }catch(e){
+    console.error(e);
+    setSyncStatus('error');
+    alert('Save failed. Check your internet connection and try again.');
+  }
+}
+
+async function apiDelete(table,id){
+  setSyncStatus('saving');
+  try{
+    await api({action:'delete',table,id});
+    setSyncStatus('ok');
+  }catch(e){
+    console.error(e);
+    setSyncStatus('error');
+    alert('Delete failed. Check your internet connection and try again.');
+  }
+}
+
+async function refreshAll(){
+  await loadAll();
+  renderCurrentView();
+}
+
+// ─── SETUP ───────────────────────────────────────────────────
+function saveScriptUrl(){
+  const val=document.getElementById('script-url-input').value.trim();
+  if(!val||!val.startsWith('https://script.google.com')){
+    alert('Please paste a valid Google Apps Script Web App URL.');
+    return;
+  }
+  SCRIPT_URL=val;
+  localStorage.setItem('mulia_script_url',val);
+  document.getElementById('setup-overlay').style.display='none';
+  document.getElementById('loading-overlay').style.display='flex';
+  init();
+}
+
+async function init(){
+  if(!SCRIPT_URL){
+    document.getElementById('loading-overlay').style.display='none';
+    document.getElementById('setup-overlay').style.display='flex';
+    return;
+  }
+  // Init sheets first time
+  try{ await api({action:'initSheet'}); }catch(e){}
+  const ok=await loadAll();
+  document.getElementById('loading-overlay').style.display='none';
+  if(ok){
+    document.getElementById('main-app').style.display='block';
+    renderDashboard();
+  } else {
+    // Show error in setup box
+    document.getElementById('setup-overlay').style.display='flex';
+    document.getElementById('script-url-input').value=SCRIPT_URL;
+  }
+}
+
+// ─── UTILS ───────────────────────────────────────────────────
+function today(){return new Date().toISOString().split('T')[0]}
+function initials(n){return n.split(' ').map(w=>w[0]).join('').slice(0,2).toUpperCase()}
+function probColor(p){return p>=75?'var(--color-success)':p>=40?'var(--color-warning)':'var(--color-danger)';}
+function probBarColor(p){return p>=75?'#1D9E75':p>=40?'#BA7517':'#E24B4A';}
+function typeBadge(t){return `<span class="badge badge-${t}">${t}</span>`}
+function roleBadge(r){return `<span class="badge badge-role-${r}">${r}</span>`}
+function projStatusBadge(s){
+  const m={active:'badge-active',onhold:'badge-onhold',won:'badge-won',lost:'badge-lost',cancelled:'badge-cancelled'};
+  const l={active:'Active',onhold:'On hold',won:'Won',lost:'Lost',cancelled:'Cancelled'};
+  return `<span class="badge ${m[s]||''}">${l[s]||s}</span>`;
+}
+function statusBadge(s){
+  const m={todo:'badge-todo',inprogress:'badge-inprogress',done:'badge-done',blocked:'badge-blocked'};
+  const l={todo:'To do',inprogress:'In progress',done:'Done',blocked:'Blocked'};
+  return `<span class="badge ${m[s]||''}">${l[s]||s}</span>`;
+}
+function purposeBadge(p){return `<span class="badge badge-visit-${p}">${PURPOSE_LABELS[p]||p}</span>`}
+function isInactive(p){return INACTIVE.includes(p.status);}
+function avatarClass(r){return r==='Sales'?'avatar-Sales':r==='Engineer'?'avatar-Engineer':'avatar-default';}
+function empById(id){return state.employees.find(e=>e.id==id)}
+function projById(id){return state.projects.find(p=>p.id==id)}
+function nextId(arr){return arr.length?Math.max(...arr.map(x=>Number(x.id)))+1:1}
+
+function dueBadge(due,status){
+  if(status==='done'||!due)return'';
+  if(due<today())return `<span class="badge badge-overdue">Overdue</span>`;
+  if(due===today())return `<span class="badge badge-duesoon">Due today</span>`;
+  const diff=Math.round((new Date(due)-new Date(today()))/(864e5));
+  if(diff<=3)return `<span class="badge badge-duesoon">Due in ${diff}d</span>`;
+  return `<span style="font-size:11px;color:var(--color-text-secondary)">📅 ${due}</span>`;
+}
+function isOverdue(t){return t.status!=='done'&&t.due&&t.due<today();}
+function isDueToday(t){return t.status!=='done'&&t.due===today();}
+
+function getMonday(d){const dt=new Date(d);const day=dt.getDay();dt.setDate(dt.getDate()-day+(day===0?-6:1));return dt;}
+function fmtDate(d){return d.toISOString().split('T')[0]}
+function fmtDisplay(d){return d.toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}
+function getWeekRange(offset){
+  const now=new Date();now.setDate(now.getDate()+offset*7);
+  const mon=getMonday(now);const fri=new Date(mon);fri.setDate(mon.getDate()+6);
+  return{start:fmtDate(mon),end:fmtDate(fri),monObj:mon,friObj:fri};
+}
+function probWidget(prob){
+  return `<div style="min-width:80px"><div style="font-size:11px;color:var(--color-text-secondary);margin-bottom:2px">Close probability</div><div style="font-size:13px;font-weight:500;color:${probColor(prob)}">${prob}%</div><div class="prob-bar-bg"><div class="prob-bar-fill" style="width:${prob}%;background:${probBarColor(prob)}"></div></div></div>`;
+}
+
+// ─── NAVIGATION ──────────────────────────────────────────────
+function showView(v){
+  currentView=v;
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>{
+    b.classList.toggle('active',['dashboard','tasks','sales','projects','employees','weekly'][i]===v);
+  });
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.getElementById('v-'+v).classList.add('active');
+  renderCurrentView();
+}
+function renderCurrentView(){
+  if(currentView==='dashboard')renderDashboard();
+  else if(currentView==='tasks'){populateTaskFilters();renderTasks();}
+  else if(currentView==='sales'){populateVisitFilters();renderVisits();}
+  else if(currentView==='weekly')renderWeekly();
+  else if(currentView==='projects')renderProjects();
+  else if(currentView==='employees')renderEmployees();
+}
+
+// ─── CARD BUILDERS ───────────────────────────────────────────
+function taskCard(t){
+  const emp=empById(t.empId);const proj=projById(t.projId);const overdue=isOverdue(t);
+  return `<div class="card ${overdue?'card-overdue':''}"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
+    <div style="display:flex;align-items:flex-start;gap:10px;flex:1">
+      <div class="avatar ${emp?avatarClass(emp.role):'avatar-default'}" style="flex-shrink:0;margin-top:2px">${emp?initials(emp.name):'?'}</div>
+      <div style="flex:1">
+        <div style="font-size:14px;font-weight:500">${t.name}</div>
+        <div class="task-meta">
+          ${emp?`<span>${emp.name}</span><span>&middot;</span>`:''}
+          ${proj?`<span>${proj.name} ${typeBadge(proj.type)}</span>`:''}
+          ${t.due?`<span>&middot;</span>${dueBadge(t.due,t.status)}`:''}
+          ${t.blocker?`<span>&middot;</span><span style="color:var(--color-danger-text);font-size:11px">⚠ ${t.blocker}</span>`:''}
+        </div>
+        ${t.desc?`<div style="font-size:12px;color:var(--color-text-secondary);margin-top:4px">${t.desc}</div>`:''}
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+      ${statusBadge(t.status)}
+      <button class="btn-sm" onclick="editTask(${t.id})" aria-label="Edit">✎</button>
+      <button class="btn-sm btn-danger" onclick="deleteTask(${t.id})" aria-label="Delete">✕</button>
+    </div>
+  </div></div>`;
+}
+
+function visitCard(v){
+  const emp=empById(v.empId);const proj=v.projId?projById(v.projId):null;
+  return `<div class="card visit-card-accent">
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px">
+      <div style="display:flex;align-items:flex-start;gap:10px;flex:1">
+        <div class="avatar avatar-Sales" style="flex-shrink:0;margin-top:2px">${emp?initials(emp.name):'?'}</div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500">${v.client}</div>
+          <div class="task-meta">
+            ${emp?`<span>${emp.name}</span><span>&middot;</span>`:''}
+            <span>📅 ${v.date}${v.time?' '+v.time:''}</span>
+            <span>&middot;</span>
+            <span>📍 ${v.location}</span>
+            ${proj?`<span>&middot;</span><span>${proj.name} ${typeBadge(proj.type)}</span>`:'<span style="color:var(--color-text-tertiary)">&middot; No project</span>'}
+          </div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        ${purposeBadge(v.purpose)}
+        <button class="btn-sm" onclick="editVisit(${v.id})" aria-label="Edit">✎</button>
+        <button class="btn-sm btn-danger" onclick="deleteVisit(${v.id})" aria-label="Delete">✕</button>
+      </div>
+    </div>
+    ${v.outcome?`<div style="font-size:13px;margin-bottom:6px">${v.outcome}</div>`:''}
+    ${v.next?`<div class="next-action-box"><span style="font-size:11px;font-weight:500;color:var(--color-text-secondary)">Next action</span><div style="margin-top:3px;font-size:13px">${v.next}</div></div>`:''}
+  </div>`;
+}
+
+function projCard(p){
+  const sales=empById(p.salesOwner);const eng=empById(p.engOwner);
+  const si=SALES_STAGES.indexOf(p.salesStage);const ei=ENG_STAGES.indexOf(p.engStage);
+  const salesSteps=SALES_STAGES.map((s,i)=>`<span class="stage-step${i===si?' current':''}">${s}</span>`).join('');
+  const engSteps=ENG_STAGES.map((s,i)=>`<span class="stage-step${i===ei?' current':''}">${s}</span>`).join('');
+  const openTasks=state.tasks.filter(t=>t.projId==p.id&&t.status!=='done').length;
+  return `<div class="card ${isInactive(p)?'card-dimmed':''}">
+    <div class="project-card-header">
+      <div style="flex:1">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px">
+          <span style="font-weight:500;font-size:15px">${p.name}</span>${projStatusBadge(p.status)}
+        </div>
+        ${p.deadline?`<div style="font-size:12px;color:var(--color-text-secondary)">📅 ${p.deadline}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px">
+        ${isInactive(p)?'':probWidget(p.prob)}
+        <div style="display:flex;gap:6px">
+          <button class="btn-sm" onclick="editProject(${p.id})" aria-label="Edit">✎</button>
+          <button class="btn-sm btn-danger" onclick="deleteProject(${p.id})" aria-label="Delete">✕</button>
+        </div>
+      </div>
+    </div>
+    <div class="stage-row"><span style="font-size:11px;color:var(--color-text-secondary);min-width:56px">Sales</span><div class="stage-steps">${salesSteps}</div>${sales?`<span style="font-size:11px;color:var(--color-text-secondary);margin-left:6px">${sales.name}</span>`:''}</div>
+    <div class="stage-row"><span style="font-size:11px;color:var(--color-text-secondary);min-width:56px">Delivery</span><div class="stage-steps">${engSteps}</div>${eng?`<span style="font-size:11px;color:var(--color-text-secondary);margin-left:6px">${eng.name}</span>`:''}</div>
+    ${p.notes?`<div style="font-size:12px;color:var(--color-text-secondary);margin-top:8px">${p.notes}</div>`:''}
+    <div style="font-size:12px;color:var(--color-text-tertiary);margin-top:6px">${openTasks} open task${openTasks!==1?'s':''}</div>
+  </div>`;
+}
+
+// ─── DASHBOARD ───────────────────────────────────────────────
+function renderDashboard(){
+  const activeTasks=state.tasks.filter(t=>t.status!=='done');
+  const overdueTasks=activeTasks.filter(t=>isOverdue(t));
+  const dueTodayTasks=activeTasks.filter(t=>isDueToday(t));
+  const activeProjs=state.projects.filter(p=>p.status==='active');
+  const won=state.projects.filter(p=>p.status==='won').length;
+  const lost=state.projects.filter(p=>p.status==='lost'||p.status==='cancelled').length;
+  const weightedPipeline=activeProjs.reduce((s,p)=>s+(p.prob/100),0).toFixed(1);
+  const todayVisits=state.visits.filter(v=>v.date===today()).length;
+
+  document.getElementById('metrics').innerHTML=`
+    <div class="metric"><div class="metric-label">Team size</div><div class="metric-val">${state.employees.length}</div></div>
+    <div class="metric"><div class="metric-label">Active projects</div><div class="metric-val">${activeProjs.length}</div></div>
+    <div class="metric"><div class="metric-label">Open tasks</div><div class="metric-val">${activeTasks.length}</div></div>
+    <div class="metric"><div class="metric-label">Due today</div><div class="metric-val" style="color:var(--color-warning)">${dueTodayTasks.length}</div></div>
+    <div class="metric"><div class="metric-label">Overdue</div><div class="metric-val" style="color:var(--color-danger)">${overdueTasks.length}</div></div>
+    <div class="metric"><div class="metric-label">Visits today</div><div class="metric-val" style="color:#3C3489">${todayVisits}</div></div>
+    <div class="metric"><div class="metric-label">Weighted pipeline</div><div class="metric-val">${weightedPipeline}<span style="font-size:13px;color:var(--color-text-secondary)"> deals</span></div></div>
+    <div class="metric"><div class="metric-label">Won / lost</div><div class="metric-val"><span style="color:var(--color-success)">${won}</span><span style="font-size:14px;color:var(--color-text-secondary)"> / </span><span style="color:var(--color-danger)">${lost}</span></div></div>
+  `;
+
+  document.getElementById('dash-overdue-section').innerHTML=overdueTasks.length
+    ?`<p class="section-title" style="color:var(--color-danger)">⚠ Overdue tasks</p>${overdueTasks.map(t=>taskCard(t)).join('')}`:'';
+
+  const byEmp=state.employees.map(emp=>{
+    const empTasks=activeTasks.filter(t=>t.empId==emp.id);
+    const empVisits=state.visits.filter(v=>v.empId==emp.id&&v.date===today());
+    if(!empTasks.length&&!empVisits.length)
+      return `<div class="card"><div style="display:flex;align-items:center;justify-content:space-between"><div style="display:flex;align-items:center;gap:10px"><div class="avatar ${avatarClass(emp.role)}">${initials(emp.name)}</div><div><div style="font-weight:500">${emp.name}</div><div style="font-size:12px;color:var(--color-text-secondary)">${emp.role}</div></div></div><span style="font-size:12px;color:var(--color-text-tertiary)">No open tasks or visits today</span></div></div>`;
+    const taskItems=empTasks.map(t=>{const proj=projById(t.projId);return `<div style="padding:6px 0;border-top:0.5px solid var(--color-border)"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="font-size:13px;font-weight:500;flex:1">${t.name}</div><div style="display:flex;align-items:center;gap:4px;flex-shrink:0">${statusBadge(t.status)}${dueBadge(t.due,t.status)}</div></div>${proj?`<div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">${proj.name} ${typeBadge(proj.type)}</div>`:''}</div>`;}).join('');
+    const visitItems=empVisits.map(v=>`<div style="padding:6px 0;border-top:0.5px solid var(--color-border)"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><div style="font-size:13px;font-weight:500;flex:1">📍 ${v.client}</div>${purposeBadge(v.purpose)}</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">${v.location}${v.time?' &middot; '+v.time:''}</div></div>`).join('');
+    const badges=[];
+    if(empTasks.length)badges.push(`<span class="badge badge-inprogress">${empTasks.length} task${empTasks.length>1?'s':''}</span>`);
+    if(empVisits.length)badges.push(`<span class="badge" style="background:#EEEDFE;color:#3C3489">${empVisits.length} visit${empVisits.length>1?'s':''} today</span>`);
+    return `<div class="card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px"><div style="display:flex;align-items:center;gap:10px"><div class="avatar ${avatarClass(emp.role)}">${initials(emp.name)}</div><div><div style="font-weight:500">${emp.name}</div><div style="font-size:12px;color:var(--color-text-secondary)">${emp.role} &middot; ${emp.focus}</div></div></div><div style="display:flex;gap:4px">${badges.join('')}</div></div>${taskItems}${visitItems}</div>`;
+  }).join('');
+  document.getElementById('today-summary').innerHTML=byEmp||'<p class="empty">No employees yet.</p>';
+
+  const health=state.projects.filter(p=>!isInactive(p)).map(p=>{
+    const sales=empById(p.salesOwner);const eng=empById(p.engOwner);
+    const si=SALES_STAGES.indexOf(p.salesStage);const ei=ENG_STAGES.indexOf(p.engStage);
+    const salesSteps=SALES_STAGES.map((s,i)=>`<span class="stage-step${i===si?' current':''}">${s}</span>`).join('');
+    const engSteps=ENG_STAGES.map((s,i)=>`<span class="stage-step${i===ei?' current':''}">${s}</span>`).join('');
+    const pOverdue=state.tasks.filter(t=>t.projId==p.id&&isOverdue(t)).length;
+    return `<div class="card"><div class="project-card-header"><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:4px"><span style="font-weight:500">${p.name}</span>${projStatusBadge(p.status)}${typeBadge(p.type)}${pOverdue?`<span class="badge badge-overdue">${pOverdue} overdue</span>`:''}</div>${p.notes?`<div style="font-size:12px;color:var(--color-text-secondary)">${p.notes}</div>`:''}</div>${probWidget(p.prob)}</div><div class="stage-row"><span style="font-size:11px;color:var(--color-text-secondary);min-width:56px">Sales</span><div class="stage-steps">${salesSteps}</div>${sales?`<span style="font-size:11px;color:var(--color-text-secondary);margin-left:6px">${sales.name}</span>`:''}</div><div class="stage-row"><span style="font-size:11px;color:var(--color-text-secondary);min-width:56px">Delivery</span><div class="stage-steps">${engSteps}</div>${eng?`<span style="font-size:11px;color:var(--color-text-secondary);margin-left:6px">${eng.name}</span>`:''}</div></div>`;
+  }).join('');
+  document.getElementById('project-health').innerHTML=health||'<p class="empty">No active projects.</p>';
+}
+
+// ─── TASKS ───────────────────────────────────────────────────
+function populateTaskFilters(){
+  const fe=document.getElementById('filter-emp');const fp=document.getElementById('filter-proj');
+  const ev=fe.value,pv=fp.value;
+  fe.innerHTML='<option value="">All employees</option>'+state.employees.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  fp.innerHTML='<option value="">All projects</option>'+state.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  fe.value=ev;fp.value=pv;
+}
+
+function renderTasks(){
+  const{end:we}=getWeekRange(0);
+  const empF=document.getElementById('filter-emp').value;
+  const projF=document.getElementById('filter-proj').value;
+  const statF=document.getElementById('filter-status').value;
+  const dueF=document.getElementById('filter-due').value;
+  let tasks=[...state.tasks].filter(t=>{
+    if(empF&&t.empId!=empF)return false;
+    if(projF&&t.projId!=projF)return false;
+    if(statF&&t.status!==statF)return false;
+    if(dueF==='overdue'&&!isOverdue(t))return false;
+    if(dueF==='today'&&!isDueToday(t))return false;
+    if(dueF==='week'&&!(t.due&&t.due>=today()&&t.due<=we))return false;
+    return true;
+  }).sort((a,b)=>{
+    const aS=isOverdue(a)?0:a.status==='done'?2:1;const bS=isOverdue(b)?0:b.status==='done'?2:1;
+    if(aS!==bS)return aS-bS;
+    if(a.due&&b.due)return a.due.localeCompare(b.due);
+    if(a.due)return -1;if(b.due)return 1;return 0;
+  });
+  const open=tasks.filter(t=>t.status!=='done');const done=tasks.filter(t=>t.status==='done');
+  let html=open.map(t=>taskCard(t)).join('');
+  if(done.length)html+=`<p class="section-label" style="margin-top:${open.length?'1rem':'0'}">Completed</p>${done.map(t=>taskCard(t)).join('')}`;
+  document.getElementById('task-list').innerHTML=html||'<p class="empty">No tasks found.</p>';
+}
+
+let editingTask=null;
+function openTaskForm(id){
+  editingTask=id||null;
+  const te=document.getElementById('t-emp');const tp=document.getElementById('t-proj');
+  te.innerHTML=state.employees.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  tp.innerHTML=state.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  if(id){
+    const t=state.tasks.find(x=>x.id==id);
+    document.getElementById('task-form-title').textContent='Edit task';
+    document.getElementById('t-name').value=t.name;document.getElementById('t-desc').value=t.desc||'';
+    te.value=t.empId;tp.value=t.projId;document.getElementById('t-status').value=t.status;
+    document.getElementById('t-due').value=t.due||'';document.getElementById('t-blocker').value=t.blocker||'';
+  }else{
+    document.getElementById('task-form-title').textContent='Add task';
+    document.getElementById('t-name').value='';document.getElementById('t-desc').value='';
+    document.getElementById('t-status').value='todo';document.getElementById('t-due').value='';document.getElementById('t-blocker').value='';
+  }
+  document.getElementById('task-form').style.display='block';
+}
+function closeTaskForm(){document.getElementById('task-form').style.display='none';editingTask=null;}
+function editTask(id){populateTaskFilters();openTaskForm(id);}
+async function deleteTask(id){
+  if(!confirm('Delete this task?'))return;
+  state.tasks=state.tasks.filter(t=>t.id!=id);
+  renderTasks();
+  await apiDelete('tasks',id);
+}
+async function saveTask(){
+  const obj={
+    name:document.getElementById('t-name').value.trim(),
+    desc:document.getElementById('t-desc').value.trim(),
+    empId:parseInt(document.getElementById('t-emp').value),
+    projId:parseInt(document.getElementById('t-proj').value),
+    status:document.getElementById('t-status').value,
+    due:document.getElementById('t-due').value||'',
+    blocker:document.getElementById('t-blocker').value.trim(),
+  };
+  if(!obj.name)return;
+  if(editingTask){
+    const i=state.tasks.findIndex(t=>t.id==editingTask);
+    obj.id=editingTask;obj.created=state.tasks[i].created;
+    state.tasks[i]={...state.tasks[i],...obj};
+  }else{
+    obj.id=nextId(state.tasks);obj.created=today();
+    state.tasks.push(obj);
+  }
+  closeTaskForm();renderTasks();
+  await apiSave('tasks',obj);
+}
+
+// ─── VISITS ──────────────────────────────────────────────────
+function populateVisitFilters(){
+  const fe=document.getElementById('filter-visit-emp');const ev=fe.value;
+  fe.innerHTML='<option value="">All sales staff</option>'+state.employees.filter(e=>e.role==='Sales').map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  fe.value=ev;
+}
+
+function renderVisits(){
+  const{start:ws}=getWeekRange(0);
+  const ms=new Date();ms.setDate(1);const monthStart=fmtDate(ms);
+  const empF=document.getElementById('filter-visit-emp').value;
+  const purposeF=document.getElementById('filter-visit-purpose').value;
+  const dateF=document.getElementById('filter-visit-date').value;
+  let visits=[...state.visits].filter(v=>{
+    if(empF&&v.empId!=empF)return false;
+    if(purposeF&&v.purpose!==purposeF)return false;
+    if(dateF==='today'&&v.date!==today())return false;
+    if(dateF==='week'&&v.date<ws)return false;
+    if(dateF==='month'&&v.date<monthStart)return false;
+    return true;
+  }).sort((a,b)=>b.date.localeCompare(a.date)||(b.time||'').localeCompare(a.time||''));
+  const grouped={};visits.forEach(v=>{if(!grouped[v.date])grouped[v.date]=[];grouped[v.date].push(v);});
+  const html=Object.entries(grouped).sort((a,b)=>b[0].localeCompare(a[0])).map(([date,vs])=>{
+    const label=date===today()?'Today':date;
+    return `<p class="section-label">${label} <span style="font-weight:400;color:var(--color-text-tertiary)">&middot; ${vs.length} visit${vs.length>1?'s':''}</span></p>${vs.map(v=>visitCard(v)).join('')}`;
+  }).join('');
+  document.getElementById('visit-list').innerHTML=html||'<p class="empty">No visits found.</p>';
+}
+
+let editingVisit=null;
+function openVisitForm(id){
+  editingVisit=id||null;
+  const ve=document.getElementById('v-emp');const vp=document.getElementById('v-proj');
+  ve.innerHTML=state.employees.filter(e=>e.role==='Sales').map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  vp.innerHTML='<option value="">— No project link —</option>'+state.projects.map(p=>`<option value="${p.id}">${p.name}</option>`).join('');
+  if(id){
+    const v=state.visits.find(x=>x.id==id);
+    document.getElementById('visit-form-title').textContent='Edit visit';
+    ve.value=v.empId;document.getElementById('v-date').value=v.date;document.getElementById('v-time').value=v.time||'';
+    document.getElementById('v-location').value=v.location;document.getElementById('v-client').value=v.client;
+    document.getElementById('v-purpose').value=v.purpose;document.getElementById('v-outcome').value=v.outcome||'';
+    document.getElementById('v-next').value=v.next||'';vp.value=v.projId||'';
+  }else{
+    document.getElementById('visit-form-title').textContent='Log a visit';
+    document.getElementById('v-date').value=today();document.getElementById('v-time').value='';
+    document.getElementById('v-location').value='';document.getElementById('v-client').value='';
+    document.getElementById('v-purpose').value='demo';document.getElementById('v-outcome').value='';
+    document.getElementById('v-next').value='';vp.value='';
+  }
+  document.getElementById('visit-form').style.display='block';
+}
+function closeVisitForm(){document.getElementById('visit-form').style.display='none';editingVisit=null;}
+function editVisit(id){openVisitForm(id);}
+async function deleteVisit(id){
+  if(!confirm('Delete this visit?'))return;
+  state.visits=state.visits.filter(v=>v.id!=id);
+  renderVisits();
+  await apiDelete('visits',id);
+}
+async function saveVisit(){
+  const projVal=document.getElementById('v-proj').value;
+  const obj={
+    empId:parseInt(document.getElementById('v-emp').value),
+    date:document.getElementById('v-date').value||today(),
+    time:document.getElementById('v-time').value||'',
+    location:document.getElementById('v-location').value.trim(),
+    client:document.getElementById('v-client').value.trim(),
+    purpose:document.getElementById('v-purpose').value,
+    outcome:document.getElementById('v-outcome').value.trim(),
+    next:document.getElementById('v-next').value.trim(),
+    projId:projVal?parseInt(projVal):null,
+  };
+  if(!obj.client)return;
+  if(editingVisit){
+    const i=state.visits.findIndex(v=>v.id==editingVisit);
+    obj.id=editingVisit;state.visits[i]={...state.visits[i],...obj};
+  }else{
+    obj.id=nextId(state.visits);state.visits.push(obj);
+  }
+  closeVisitForm();renderVisits();
+  await apiSave('visits',obj);
+}
+
+// ─── PROJECTS ────────────────────────────────────────────────
+function renderProjects(){
+  const statF=document.getElementById('filter-proj-status').value;
+  const filtered=state.projects.filter(p=>!statF||p.status===statF);
+  let html='';let first=true;
+  PROJECT_TYPES.forEach(type=>{
+    const active=filtered.filter(p=>p.type===type&&!isInactive(p));
+    const inactive=filtered.filter(p=>p.type===type&&isInactive(p));
+    if(!active.length&&!inactive.length)return;
+    html+=`<p class="section-label" style="display:flex;align-items:center;gap:6px;${first?'margin-top:0':''}">${typeBadge(type)}</p>`;
+    first=false;
+    html+=active.map(projCard).join('');
+    if(inactive.length){html+=`<p style="font-size:11px;color:var(--color-text-tertiary);margin:-4px 0 8px 2px">Lost / cancelled</p>`;html+=inactive.map(projCard).join('');}
+  });
+  document.getElementById('project-list').innerHTML=html||'<p class="empty">No projects match this filter.</p>';
+}
+
+let editingProject=null;
+function openProjectForm(id){
+  const pso=document.getElementById('p-sales-owner');const peo=document.getElementById('p-eng-owner');
+  pso.innerHTML=state.employees.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  peo.innerHTML=state.employees.map(e=>`<option value="${e.id}">${e.name}</option>`).join('');
+  editingProject=id||null;
+  const prob=id?projById(id).prob:70;
+  document.getElementById('p-prob').value=prob;document.getElementById('prob-display').textContent=prob+'%';
+  if(id){
+    document.getElementById('proj-form-title').textContent='Edit project';
+    const p=projById(id);
+    document.getElementById('p-name').value=p.name;document.getElementById('p-type').value=p.type;
+    document.getElementById('p-status').value=p.status;pso.value=p.salesOwner;
+    document.getElementById('p-sales-stage').value=p.salesStage;peo.value=p.engOwner;
+    document.getElementById('p-eng-stage').value=p.engStage;
+    document.getElementById('p-deadline').value=p.deadline||'';document.getElementById('p-notes').value=p.notes||'';
+  }else{
+    document.getElementById('proj-form-title').textContent='Add project';
+    document.getElementById('p-name').value='';document.getElementById('p-type').value='AMR';
+    document.getElementById('p-status').value='active';document.getElementById('p-sales-stage').value='Prospecting';
+    document.getElementById('p-eng-stage').value='Planning';document.getElementById('p-deadline').value='';document.getElementById('p-notes').value='';
+  }
+  document.getElementById('project-form').style.display='block';
+}
+function closeProjectForm(){document.getElementById('project-form').style.display='none';editingProject=null;}
+function editProject(id){openProjectForm(id);}
+async function deleteProject(id){
+  if(!confirm('Delete this project?'))return;
+  state.projects=state.projects.filter(p=>p.id!=id);
+  renderProjects();
+  await apiDelete('projects',id);
+}
+async function saveProject(){
+  const obj={
+    name:document.getElementById('p-name').value.trim(),
+    type:document.getElementById('p-type').value,
+    status:document.getElementById('p-status').value,
+    prob:parseInt(document.getElementById('p-prob').value),
+    salesOwner:parseInt(document.getElementById('p-sales-owner').value),
+    salesStage:document.getElementById('p-sales-stage').value,
+    engOwner:parseInt(document.getElementById('p-eng-owner').value),
+    engStage:document.getElementById('p-eng-stage').value,
+    deadline:document.getElementById('p-deadline').value,
+    notes:document.getElementById('p-notes').value.trim(),
+  };
+  if(!obj.name)return;
+  if(editingProject){const i=state.projects.findIndex(p=>p.id==editingProject);obj.id=editingProject;state.projects[i]={...state.projects[i],...obj};}
+  else{obj.id=nextId(state.projects);state.projects.push(obj);}
+  closeProjectForm();renderProjects();
+  await apiSave('projects',obj);
+}
+
+// ─── EMPLOYEES ───────────────────────────────────────────────
+function renderEmployees(){
+  const{start:ws,end:we}=getWeekRange(0);
+  const salesEmps=state.employees.filter(e=>e.role==='Sales');
+  const engEmps=state.employees.filter(e=>e.role==='Engineer');
+  function empCard(emp){
+    const projs=state.projects.filter(p=>p.salesOwner==emp.id||p.engOwner==emp.id);
+    const tasks=state.tasks.filter(t=>t.empId==emp.id);
+    const openCnt=tasks.filter(t=>t.status!=='done').length;
+    const doneCnt=tasks.filter(t=>t.status==='done').length;
+    const visitCnt=state.visits.filter(v=>v.empId==emp.id).length;
+    const weekVisits=state.visits.filter(v=>v.empId==emp.id&&v.date>=ws&&v.date<=we).length;
+    const target=Number(emp.weeklyVisitTarget)||0;
+    const targetLine=emp.role==='Sales'&&target?`<div style="margin-top:6px"><div style="display:flex;justify-content:space-between;font-size:12px;color:var(--color-text-secondary);margin-bottom:3px"><span>This week's visits</span><span style="font-weight:500;color:${weekVisits>=target?'var(--color-success)':'var(--color-text-primary)'}">${weekVisits} / ${target}</span></div><div class="target-bar-bg"><div style="height:8px;border-radius:4px;background:${weekVisits>=target?'#1D9E75':weekVisits/target>=0.6?'#BA7517':'#E24B4A'};width:${Math.min(100,target?Math.round(weekVisits/target*100):0)}%"></div></div></div>`:'';
+    return `<div class="card"><div style="display:flex;align-items:flex-start;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:12px">
+        <div class="avatar ${avatarClass(emp.role)}" style="width:40px;height:40px;font-size:14px">${initials(emp.name)}</div>
+        <div><div style="font-weight:500;font-size:15px">${emp.name}</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:3px">${roleBadge(emp.role)}${emp.focus?`<span style="font-size:12px;color:var(--color-text-secondary)">${emp.focus}</span>`:''}</div>
+        </div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="btn-sm" onclick="editEmployee(${emp.id})" aria-label="Edit">✎</button>
+        <button class="btn-sm btn-danger" onclick="deleteEmployee(${emp.id})" aria-label="Delete">✕</button>
+      </div>
+    </div>
+    ${targetLine}
+    ${projs.length?`<div style="margin-top:10px;padding-top:8px;border-top:0.5px solid var(--color-border)"><div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:6px">Projects</div><div class="pill-group">${projs.map(p=>`<span class="pill">${p.name} ${typeBadge(p.type)}</span>`).join('')}</div></div>`:''}
+    <div style="margin-top:8px;font-size:12px;color:var(--color-text-tertiary)">${openCnt} open task${openCnt!==1?'s':''} &middot; ${doneCnt} completed${emp.role==='Sales'?' &middot; '+visitCnt+' total visit'+(visitCnt!==1?'s':''):''}</div>
+    </div>`;
+  }
+  let html='';
+  if(salesEmps.length)html+=`<p class="section-label">Sales</p>${salesEmps.map(empCard).join('')}`;
+  if(engEmps.length)html+=`<p class="section-label">Engineering</p>${engEmps.map(empCard).join('')}`;
+  document.getElementById('emp-list').innerHTML=html||'<p class="empty">No employees yet.</p>';
+}
+
+let editingEmp=null;
+function openEmpForm(id){
+  editingEmp=id||null;
+  document.getElementById('emp-form-title').textContent=id?'Edit employee':'Add employee';
+  const role=id?empById(id).role:'Sales';
+  document.getElementById('e-target-row').style.display=role==='Sales'?'block':'none';
+  if(id){const e=empById(id);document.getElementById('e-name').value=e.name;document.getElementById('e-role').value=e.role;document.getElementById('e-focus').value=e.focus||'';document.getElementById('e-target').value=e.weeklyVisitTarget||'';}
+  else{document.getElementById('e-name').value='';document.getElementById('e-role').value='Sales';document.getElementById('e-focus').value='';document.getElementById('e-target').value='';}
+  document.getElementById('emp-form').style.display='block';
+}
+function closeEmpForm(){document.getElementById('emp-form').style.display='none';editingEmp=null;}
+function editEmployee(id){openEmpForm(id);}
+async function deleteEmployee(id){
+  if(!confirm('Delete this employee?'))return;
+  state.employees=state.employees.filter(e=>e.id!=id);
+  renderEmployees();
+  await apiDelete('employees',id);
+}
+async function saveEmployee(){
+  const role=document.getElementById('e-role').value;
+  const obj={
+    name:document.getElementById('e-name').value.trim(),role,
+    focus:document.getElementById('e-focus').value.trim(),
+    weeklyVisitTarget:role==='Sales'?parseInt(document.getElementById('e-target').value)||0:0,
+  };
+  if(!obj.name)return;
+  if(editingEmp){const i=state.employees.findIndex(e=>e.id==editingEmp);obj.id=editingEmp;state.employees[i]={...state.employees[i],...obj};}
+  else{obj.id=nextId(state.employees);state.employees.push(obj);}
+  closeEmpForm();renderEmployees();
+  await apiSave('employees',obj);
+}
+
+// ─── WEEKLY SUMMARY ──────────────────────────────────────────
+function shiftWeek(d){
+  weekOffset=Math.min(0,weekOffset+d);
+  document.getElementById('btn-next-week').disabled=weekOffset>=0;
+  renderWeekly();
+}
+
+function renderWeekly(){
+  const{start,end,monObj,friObj}=getWeekRange(weekOffset);
+  document.getElementById('week-label').textContent=`Week of ${fmtDisplay(monObj)} – ${fmtDisplay(friObj)}`;
+  document.getElementById('week-sub').textContent=weekOffset===0?'Current week':'Past week';
+  document.getElementById('btn-next-week').disabled=weekOffset>=0;
+
+  // Use the full week (Mon–Sun) for visit matching — covers any day they log
+  const wVisits=state.visits.filter(v=>v.date>=start&&v.date<=end);
+  const allWeekTasks=state.tasks.filter(t=>t.due&&t.due>=start&&t.due<=end);
+  const wDone=allWeekTasks.filter(t=>t.status==='done');
+  const wOpen=allWeekTasks.filter(t=>t.status!=='done');
+  const wOverdue=state.tasks.filter(t=>t.status!=='done'&&t.due&&t.due<today());
+  const newLeads=wVisits.filter(v=>!v.projId);
+  const salesEmps=state.employees.filter(e=>e.role==='Sales');
+
+  let html=`<div class="metric-grid">
+    <div class="metric"><div class="metric-label">Tasks completed</div><div class="metric-val" style="color:var(--color-success)">${wDone.length}</div></div>
+    <div class="metric"><div class="metric-label">Still open</div><div class="metric-val">${wOpen.length}</div></div>
+    <div class="metric"><div class="metric-label">Overdue</div><div class="metric-val" style="color:var(--color-danger)">${wOverdue.length}</div></div>
+    <div class="metric"><div class="metric-label">Client visits</div><div class="metric-val" style="color:#3C3489">${wVisits.length}</div></div>
+    <div class="metric"><div class="metric-label">New leads</div><div class="metric-val">${newLeads.length}</div></div>
+  </div><hr class="divider" style="margin-top:0">`;
+
+  html+=`<p class="section-label">Task completion by person</p><div class="card" style="padding:0.75rem 1.25rem">`;
+  if(state.employees.length){
+    state.employees.forEach(emp=>{
+      const empTasks=allWeekTasks.filter(t=>t.empId==emp.id);
+      const empDone=empTasks.filter(t=>t.status==='done');
+      const pct=empTasks.length?Math.round(empDone.length/empTasks.length*100):0;
+      const barColor=pct===100?'#1D9E75':pct>=50?'#BA7517':'#E24B4A';
+      html+=`<div class="person-row"><div class="avatar ${avatarClass(emp.role)}" style="width:28px;height:28px;font-size:11px">${initials(emp.name)}</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px"><span style="font-size:13px;font-weight:500">${emp.name}</span><span style="font-size:12px;color:var(--color-text-secondary)">${empDone.length} / ${empTasks.length} done</span></div><div class="bar-bg"><div style="height:6px;border-radius:3px;background:${barColor};width:${pct}%"></div></div></div></div>`;
+    });
+  } else html+=`<p class="empty">No employees yet.</p>`;
+  html+=`</div>`;
+
+  html+=`<hr class="divider"><p class="section-label">Sales visit targets</p><div class="card" style="padding:0.75rem 1.25rem">`;
+  if(salesEmps.length){
+    salesEmps.forEach(emp=>{
+      const visited=wVisits.filter(v=>v.empId==emp.id).length;
+      const target=Number(emp.weeklyVisitTarget)||0;
+      const pct=target?Math.min(100,Math.round(visited/target*100)):0;
+      const barColor=pct>=100?'#1D9E75':pct>=60?'#BA7517':'#E24B4A';
+      const over=target&&visited>target?`<span class="badge badge-done" style="font-size:10px">+${visited-target} over</span>`:'';
+      html+=`<div class="person-row"><div class="avatar avatar-Sales" style="width:28px;height:28px;font-size:11px">${initials(emp.name)}</div><div style="flex:1;min-width:0"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;gap:6px"><span style="font-size:13px;font-weight:500">${emp.name}</span><div style="display:flex;align-items:center;gap:4px"><span style="font-size:12px;color:var(--color-text-secondary)">${visited}${target?' / '+target:''} visits</span>${over}</div></div>${target?`<div class="target-bar-bg"><div style="height:8px;border-radius:4px;background:${barColor};width:${pct}%"></div></div>`:''}</div></div>`;
+    });
+  } else html+=`<p class="empty">No sales staff found.</p>`;
+  html+=`</div>`;
+
+  html+=`<hr class="divider"><p class="section-label">Sales visits this week</p>`;
+  if(wVisits.length){
+    const grouped={};wVisits.forEach(v=>{if(!grouped[v.date])grouped[v.date]=[];grouped[v.date].push(v);});
+    html+=`<div class="card" style="padding:0.75rem 1.25rem">`;
+    Object.entries(grouped).sort((a,b)=>a[0].localeCompare(b[0])).forEach(([date,vs],gi)=>{
+      if(gi>0)html+=`<div style="border-top:0.5px solid var(--color-border);margin:8px 0"></div>`;
+      html+=`<div style="font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:6px;${gi>0?'margin-top:4px':''}">${date===today()?'Today':date} \u00b7 ${vs.length} visit${vs.length>1?'s':''}</div>`;
+      vs.forEach(v=>{
+        const emp=empById(v.empId);const proj=v.projId?projById(v.projId):null;
+        html+=`<div class="visit-row"><div class="dot" style="background:${v.projId?'#7F77DD':'#888780'}"></div><div style="flex:1"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><span style="font-size:13px;font-weight:500">${v.client}</span>${purposeBadge(v.purpose)}</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">${emp?emp.name:''} \u00b7 ${v.location}${proj?` \u00b7 ${proj.name} ${typeBadge(proj.type)}`:'<span style="color:var(--color-text-tertiary)"> \u00b7 No project</span>'}</div>${v.next?`<div class="next-action-box"><span style="font-weight:500">Next:</span> ${v.next}</div>`:''}</div></div>`;
+      });
+    });
+    html+=`</div>`;
+  } else html+=`<p class="empty">No visits logged this week.</p>`;
+
+  if(wOverdue.length){
+    html+=`<hr class="divider"><p class="section-label" style="color:var(--color-danger)">\u26a0 Overdue \u2014 carrying forward</p><div class="card" style="padding:0.75rem 1.25rem">`;
+    wOverdue.forEach(t=>{
+      const emp=empById(t.empId);const proj=projById(t.projId);
+      const days=Math.round((new Date(today())-new Date(t.due))/864e5);
+      html+=`<div class="person-row"><div class="avatar ${emp?avatarClass(emp.role):'avatar-default'}" style="width:28px;height:28px;font-size:11px">${emp?initials(emp.name):'?'}</div><div style="flex:1"><div style="font-size:13px;font-weight:500">${t.name}</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">${emp?emp.name:''} \u00b7 ${proj?proj.name:''}${proj?' '+typeBadge(proj.type):''}${t.blocker?`<span style="color:var(--color-danger-text)"> \u00b7 ${t.blocker}</span>`:''}</div></div><span class="badge badge-overdue">${days}d overdue</span></div>`;
+    });
+    html+=`</div>`;
+  }
+
+  html+=`<hr class="divider"><p class="section-label">Pipeline \u2014 active projects</p><div class="card" style="padding:0.75rem 1.25rem">`;
+  const activeProjs=state.projects.filter(p=>!isInactive(p));
+  if(activeProjs.length){
+    activeProjs.forEach(p=>{
+      const sales=empById(p.salesOwner);
+      const pVisits=wVisits.filter(v=>v.projId==p.id).length;
+      html+=`<div class="person-row"><div style="flex:1"><div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap"><span style="font-size:13px;font-weight:500">${p.name}</span>${typeBadge(p.type)}${projStatusBadge(p.status)}</div><div style="font-size:12px;color:var(--color-text-secondary);margin-top:2px">${sales?sales.name+' \u00b7 ':''}<span style="background:var(--color-info-bg);color:var(--color-info-text);padding:1px 6px;border-radius:8px;font-size:11px">${p.salesStage}</span>${pVisits?` \u00b7 ${pVisits} visit${pVisits>1?'s':''} this week`:''}</div></div><div style="font-size:13px;font-weight:500;color:${probColor(p.prob)}">${p.prob}%</div></div>`;
+    });
+  } else html+=`<p class="empty">No active projects.</p>`;
+  html+=`</div>`;
+
+  document.getElementById('weekly-content').innerHTML=html;
+}
+
+// BOOT
+window.addEventListener('load',init);
+</script>
+</body>
+</html>
